@@ -47,9 +47,8 @@ def index(request):
 
 @login_required
 def auth_return(request):
-    # import pdb; pdb.set_trace()
-    if not xsrfutil.validate_token(settings.SECRET_KEY, str(request.REQUEST['state']),
-                                    request.user):
+    if not xsrfutil.validate_token(
+        settings.SECRET_KEY, request.GET['state'].encode('utf-8'), request.user):
         return  HttpResponseBadRequest()
     credential = FLOW.step2_exchange(request.REQUEST)
     storage = Storage(CredentialsModel, 'id', request.user, 'credential')
