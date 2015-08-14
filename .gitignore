@@ -1,0 +1,12 @@
+# Environment
+.venv
+*.pyc
+__pycache__
+
+# Database
+db.sqlite3
+
+# Configuration
+config/*.json
+
+.ropeproject/
