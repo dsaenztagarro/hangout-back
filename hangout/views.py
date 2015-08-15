@@ -33,19 +33,21 @@ def index(request):
         http = credential.authorize(http)
         service = build("plus", "v1", http=http)
         activities = service.activities()
-        activitylist = activities.list(collection='public', userId='me').execute()
+        activitylist = (
+            activities.list(collection='public', userId='me').execute()
+        )
         logging.info(activitylist)
 
-        return render_to_response('plus/welcome.html', {
-				'activitylist': activitylist,
-		        })
+        return render_to_response(
+            'plus/welcome.html', {'activitylist': activitylist, }
+        )
 
 
 @login_required
 def auth_return(request):
-    if not xsrfutil.validate_token(
-        settings.SECRET_KEY, request.GET['state'].encode('utf-8'), request.user):
-		return HttpResponseBadRequest()
+    state = request.GET['state'].encode('utf-8')
+    if not xsrfutil.validate_token(settings.SECRET_KEY, state, request.user):
+        return HttpResponseBadRequest()
     credential = FLOW.step2_exchange(request.REQUEST)
     storage = Storage(CredentialsModel, 'id', request.user, 'credential')
     storage.put(credential)
